@@ -26,18 +26,16 @@ var Message = sequelize.define('Message', {
 exports.findAndCreate = function(req, cb) {
   utils.collectData(req, function (message) {
     User.findOrCreate({username:message.username})
-      .error(function(){
-        cb(false);
-      })
       .success(function (user){
         console.log('findOrCreate success');
+        message.username = user;
         Message.create(message)
-          .error(function(){
-            cb(false);
-          })
           .success(function (message) {
             console.log('end of promises');
             cb(true);
+          })
+          .error(function(){
+            cb(false);
           });
       });
   });
